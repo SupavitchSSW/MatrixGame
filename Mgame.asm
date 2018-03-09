@@ -47,7 +47,7 @@ menu1   db 10
         db "                    =             3) Hard                  ="
         db 10
         db 13
-        db "                    =             4) ???                   ="
+        db "                    =             4) GOD                   ="
         db 10
         db 13
         db "                    ========================================"
@@ -108,17 +108,25 @@ setLevel3:
     jmp goMain
 
 setLevel4:
-    mov gameSpeed,0FFFFh
+    mov gameSpeed,0001h
     jmp goMain
     
-printNewline:
-    mov dh,2
-    mov al,10
-    int 21h
-
-    mov al,13
-    int 21h
-    ret
+clearScreen:
+    mov cx,25
+    lout:
+        push cx
+        mov cx,80
+        lin:
+            mov ah,02h
+            mov dl,' '
+            int 21h
+            loop lin
+        pop cx
+        loop lout
+     ret
+    
+    
+    
 ; =====================================================
 ;                       SOUND
 ; ===================================================== 
@@ -180,8 +188,7 @@ soundDelay:
 
 goMain:
     call soundStart
-    mov ah,0
-    int 10h
+    call clearScreen
     jmp main
     
 noteon:
@@ -427,6 +434,7 @@ print:
     ret
 
 bye2:
+    call clearScreen
     call soundLost 
     end setup 
 
