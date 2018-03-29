@@ -258,7 +258,7 @@ soundB:
 
 ;low
 
-soundCl:
+soundcl:
     mov si,2280
     mov cx,0FFFFh
     call noteon
@@ -266,7 +266,7 @@ soundCl:
     call noteoff
     ret
 
-soundCls:
+    soundcls:
     mov si,2152
     mov cx,0FFFFh
     call noteon
@@ -274,7 +274,7 @@ soundCls:
     call noteoff
     ret
     
-soundDl:
+    sounddl:
     mov si,2031
     mov cx,0FFFFh
     call noteon
@@ -282,7 +282,7 @@ soundDl:
     call noteoff
     ret
     
-soundDls:
+    sounddls:
     mov si,1917
     mov cx,0FFFFh
     call noteon
@@ -290,7 +290,7 @@ soundDls:
     call noteoff
     ret
     
-soundEl:
+    soundel:
     mov si,1809
     mov cx,0FFFFh
     call noteon
@@ -298,7 +298,7 @@ soundEl:
     call noteoff
     ret
     
-soundFl:
+    soundfl:
     mov si,1715
     mov cx,0FFFFh
     call noteon
@@ -306,7 +306,7 @@ soundFl:
     call noteoff
     ret
     
-soundFls:
+    soundfls:
     mov si,1612
     mov cx,0FFFFh
     call noteon
@@ -330,7 +330,7 @@ soundgls:
     call noteoff
     ret
     
-soundAl:
+    soundal:
     mov si,1355
     mov cx,0FFFFh
     call noteon
@@ -338,7 +338,7 @@ soundAl:
     call noteoff
     ret
     
-soundAls:
+    soundals:
     mov si,1292
     mov cx,0FFFFh
     call noteon
@@ -346,7 +346,7 @@ soundAls:
     call noteoff
     ret
     
-soundBl:
+    soundbl:
     mov si,1207
     mov cx,0FFFFh
     call noteon
@@ -439,63 +439,44 @@ soundFail:
     ret
     
 soundLost:
+    push ax
+    push bx
     push cx
+    push dx
+    push si
     call soundD
     call loop4
     call soundD
     call loop4
-    mov ah,0bh
-    int 21h
-    cmp al,0FFh
-    je backSound
     call soundD
     call loop4
     call soundC
     call loop4
-    mov ah,0bh
-    int 21h
-    cmp al,0FFh
-    je backSound
     call soundE
     call loop4
     call soundD
     call loop4
-    mov ah,0bh
-    int 21h
-    cmp al,0FFh
-    je backSound
     call soundC
     call loop6
     call soundal
     call loop4
-    mov ah,0bh
-    int 21h
-    cmp al,0FFh
-    je backSound
     call soundal
     call loop4
     call soundal
     call loop4
-    mov ah,0bh
-    int 21h
-    cmp al,0FFh
-    je backSound
     call soundgl
     call loop4
     call soundfl
     call loop4
-    mov ah,0bh
-    int 21h
-    cmp al,0FFh
-    je backSound
     call soundgl
     call loop4
     call soundal
     call loop8
+    pop si
+    pop dx
     pop cx
-    ret
-
-backSound:
+    pop bx
+    pop ax
     ret
 
 soundMenu:
@@ -518,7 +499,24 @@ soundMenu:
     call loop6
     call soundgl   
     call loop5
-    
+    call soundgl   
+    call loop5
+    call sounde
+    call loop2
+    call sounde
+    call loop2
+    call sounde
+    call loop2
+    call sounde 
+    call loop3
+    call soundc
+    call loop2
+    call sounde 
+    call loop3
+    call soundg 
+    call loop6
+    call soundgl   
+    call loop5
     pop si
     pop dx
     pop cx
@@ -784,7 +782,6 @@ bye2:
     call clearScreen
     call byeMenu
     call soundLost
-bye2input2:
     mov ah,7
     int 21h         ; wait for in put
     cmp al,27       ;set level
