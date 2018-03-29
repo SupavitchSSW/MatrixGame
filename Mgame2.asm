@@ -5,6 +5,9 @@ org 100h
 .data      
 arrayX db 58, 0, 15, 32, 68, 24, 57, 60, 21, 31, 46, 79, 43, 76, 7, 18, 37, 28 ;18
 arrayY db 0,-2,-4,-6,-8,-10,-12,-14,-16,-18,-20,-22,-24,-26,-28,-30,-32,-34 ;18\
+
+arrayPos dw -992, -1058, -1586, -810, -578, -746, -1368, -5960, -664, -928, -840, -138, -330, -1692, -354, -798, -1434, -710
+
 arraySaveY db 0,-2,-4,-6,-8,-10,-12,-14,-16,-18,-20,-22,-24,-26,-28,-30,-32,-34 ;18
 arrayChar db 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34;18
 pt dw 0
@@ -261,24 +264,28 @@ main:
     call printLife          
     cmp count,18            ;if it is last element of array then set next loop with first element
     je  setZeroPt            ;set pointer to Zero
-    cmp [arrayY+si],0       ;if y < 0 then inc Y not print
+    cmp [arrayPos+si],0       ;if y < 0 then inc Y not print
     jl addY                 ;add y
     call printLine          ;printLine
-    cmp [arrayY+si],35      ;if y = 35 then set line to Top line
-    je setTop
-    cmp [arrayY+si],25      ;if y = 25 lost LP
-    je lostLifePoint  
+    mov bx,5600
+    cmp [arrayPos+si],bx      ;if y >= 35*160 then set line to Top line
+    jge setTop
+    mov bx,4000
+    cmp [arrayPos+si],bx      ;if y >= 25*160 lost LP
+    jge lostLifePoint  
     jmp addY
     
 addY:
-    inc [arrayY+si] ;y++    
+    mov bx,160
+    add [arrayPos+si],bx ;y++    
     inc count       ;count++
-    inc pt         ;next array
+    add pt,2         ;next array
     mov si,pt
     jmp main
 
 setTop:
-    mov [arrayY+si],0 ;set New Y
+    mov bx,5600
+    sub [arrayPos+si],bx ;set New Y -35*160
     ;call randomX      ;set Random X
     jmp addY
 
@@ -342,27 +349,22 @@ bye:
 
     
 printLife:
-    mov dh, 1      ;set row (y)
-    mov dl, 78     ;set col (x)
-    mov bh, 00h
-    mov ah, 02h
-    int 10h         ;set curser
-    
-    mov ah,9
-    mov bh,0
-    mov bl,0eh
-    mov cx,1
-    mov al,lifePoint      ;print LP
+    mov ax,0b800h
+    mov es,ax
+    mov di,156*2
+    mov ah,4Eh
+    mov al,lifePoint
     add al,48
-    int 10h         ;print
+    stosw
     ret     
     
 printLine:
     call getRandomChar            ;random character
-    call setCurserPosition        ;set new curser x,y
-    mov  bl,colorLine             ;set color
-    call print                    ;print 1 char 
-    dec  [arrayY+si]              ;y--
+    ;call setCurserPosition        ;set new curser x,y
+    ;mov  bl,colorLine             ;set color
+    call print                    ;print 1 char
+    mov  bx,160 
+    sub  [arrayPos+si],bx              ;y--
     cmp  countLine,0
     je   head
     inc  countLine                ; conunt line for change color
@@ -397,7 +399,8 @@ changeColorBLACK:
 changeColorWHITE:
     mov colorLine,0Fh
     mov countLine,0
-    add [arrayY+si],12
+    mov bx,1920
+    add [arrayPos+si],bx    ;+12*160 y 
     ret        ;exit printLine
     
 getRandomChar:
@@ -416,21 +419,20 @@ getRandomChar:
     add char,97    ;char + 33
     ret    
     
-setCurserPosition:
-    
-    mov dh, [arrayY + si]      ;set row (y)
-    mov dl, [arrayX + si]     ;set col (x)
-    mov bh, 00h
-    mov ah, 02h
-    int 10h
+setCurserPosition:   
+    mov di,[arrayPos + si]      ;set row (y)
     ret       
                    
 print:
-    mov ah,9
-    mov bh,0
-    mov cx,1
-    mov al,char         ;print char
-    int 10h 
+    cmp [arrayPos+si],0
+    jl  outprint
+    mov ax,0b800h
+    mov es,ax
+    mov di,[arrayPos+si]
+    mov ah,colorLine
+    mov al,char
+    stosw
+    outprint:
     ret
 
 bye2:

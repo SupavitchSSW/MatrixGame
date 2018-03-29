@@ -26,17 +26,17 @@ start:
     
     call soundD
     call loop1
-    call soundD
-    call loop1
-    call soundD
-    call loop1
-    call soundC
-    call loop1
-    call soundE
-    call loop1
-    call soundD
-    call loop1
-    call soundC
+    ;call soundD
+    ;call loop1
+    ;call soundD
+    ;call loop1
+    ;call soundC
+    ;call loop1
+    ;call soundE
+    ;call loop1
+    ;call soundD
+    ;call loop1
+    ;call soundC
     
     jmp start
 
@@ -44,7 +44,7 @@ loop1:
     mov ah,86h
     mov cx,3h       ;high bit
     mov dx,0h       ;low bit
-    int 15h         ;sound time
+    int 15h         ;Delay sound time
     ret
 noteon:
     mov ax,si       ;ax set freq sound
